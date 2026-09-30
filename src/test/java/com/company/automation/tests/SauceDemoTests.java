@@ -9,7 +9,7 @@ import com.company.automation.pages.LoginPage;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
+//test
 public class SauceDemoTests
         extends BaseTest {
 
