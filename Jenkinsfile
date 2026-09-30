@@ -27,6 +27,11 @@ pipeline {
             choices: ['smoke', 'regression'],
             description: 'TestNG test group to execute'
         )
+        choice(
+            name: 'EXECUTION_MODE',
+            choices: ['single', 'parallel'],
+            description: 'Run on one selected browser or both browsers in parallel'
+        )
     }
 
     stages {
@@ -44,12 +49,32 @@ pipeline {
         }
 
         stage('Test') {
+
             steps {
-                bat "mvn clean test -Dbrowser=${params.BROWSER} -Dheadless=${params.HEADLESS} -DtestType=${params.TEST_TYPE}"
+
+                script {
+
+                    if (params.EXECUTION_MODE == 'parallel') {
+
+                        parallel(
+
+                            Chrome: {
+                                bat "mvn clean test -Dbrowser=chrome -Dheadless=${params.HEADLESS} -DtestType=${params.TEST_TYPE}"
+                            },
+
+                            Firefox: {
+                                bat "mvn clean test -Dbrowser=firefox -Dheadless=${params.HEADLESS} -DtestType=${params.TEST_TYPE}"
+                            }
+                        )
+
+                    } else {
+
+                        bat "mvn clean test -Dbrowser=${params.BROWSER} -Dheadless=${params.HEADLESS} -DtestType=${params.TEST_TYPE}"
+                    }
+                }
             }
         }
-    }
-
+}
     post {
 
         always {
