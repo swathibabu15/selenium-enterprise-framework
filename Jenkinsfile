@@ -27,7 +27,7 @@ pipeline {
                 bat "mvn clean test -Dbrowser=${params.BROWSER} -Dheadless=${params.HEADLESS} -DtestType=${params.TEST_TYPE}"
             }
         }
-        
+
     }
 
     post {
