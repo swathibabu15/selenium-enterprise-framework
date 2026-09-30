@@ -5,6 +5,8 @@ import com.company.automation.config.ConfigReader;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 
 import java.time.Duration;
 
@@ -24,33 +26,44 @@ public final class DriverFactory {
         boolean headless =
                 ConfigReader.getBoolean("headless");
 
-        if (!"chrome".equalsIgnoreCase(browser)) {
+        WebDriver driver;
 
-            throw new IllegalArgumentException(
-                    "Currently supported browser: chrome"
-            );
-        }
+        if ("chrome".equalsIgnoreCase(browser)) {
 
-        ChromeOptions options =
-                new ChromeOptions();
+            ChromeOptions options =
+                    new ChromeOptions();
 
-        if (headless) {
+            if (headless) {
+                options.addArguments("--headless=new");
+            }
 
             options.addArguments(
-                    "--headless=new"
+                    "--window-size=1920,1080"
+            );
+
+            options.addArguments(
+                    "--disable-notifications"
+            );
+
+            driver = new ChromeDriver(options);
+
+        } else if ("firefox".equalsIgnoreCase(browser)) {
+
+            FirefoxOptions options =
+                    new FirefoxOptions();
+
+            if (headless) {
+                options.addArguments("--headless");
+            }
+
+            driver = new FirefoxDriver(options);
+
+        } else {
+
+            throw new IllegalArgumentException(
+                    "Unsupported browser: " + browser
             );
         }
-
-        options.addArguments(
-                "--window-size=1920,1080"
-        );
-
-        options.addArguments(
-                "--disable-notifications"
-        );
-
-        WebDriver driver =
-                new ChromeDriver(options);
 
         DRIVER.set(driver);
 
