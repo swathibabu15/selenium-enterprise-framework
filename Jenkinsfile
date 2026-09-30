@@ -8,6 +8,27 @@ pipeline {
         disableConcurrentBuilds()
     }
 
+    parameters {
+
+        choice(
+            name: 'BROWSER',
+            choices: [ 'firefox','chrome'],
+            description: 'Browser for Selenium execution'
+        )
+
+        choice(
+            name: 'HEADLESS',
+            choices: ['true', 'false'],
+            description: 'Run browser in headless mode'
+        )
+
+        choice(
+            name: 'TEST_TYPE',
+            choices: ['smoke', 'regression'],
+            description: 'TestNG test group to execute'
+        )
+    }
+
     stages {
 
         stage('Checkout') {
@@ -27,7 +48,6 @@ pipeline {
                 bat "mvn clean test -Dbrowser=${params.BROWSER} -Dheadless=${params.HEADLESS} -DtestType=${params.TEST_TYPE}"
             }
         }
-
     }
 
     post {
@@ -46,11 +66,11 @@ pipeline {
         }
 
         success {
-            echo 'Selenium tests passed.'
+            echo "Selenium ${params.TEST_TYPE} tests passed."
         }
 
         failure {
-            echo 'Selenium tests failed.'
+            echo "Selenium ${params.TEST_TYPE} tests failed."
         }
     }
 }
