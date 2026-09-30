@@ -24,8 +24,9 @@ pipeline {
 
         stage('Test') {
             steps {
-                bat 'mvn clean test -Dheadless=true'
+                bat "mvn clean test -Dbrowser=${params.BROWSER} -Dheadless=${params.HEADLESS} -DtestType=${params.TEST_TYPE}"
             }
+        }
         }
     }
 
